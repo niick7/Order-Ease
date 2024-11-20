@@ -8,6 +8,12 @@ const CartContext = createContext({
 });
 
 function cartReducer(state, action) {
+  // The state is getting from useReducer(cartReducer, {
+  //   items: [],
+  // })
+  // The action is getting from dispatchCartAction({ type: "ADD_ITEM", item });
+  // And dispatchCartAction({ type: "REMOVE_ITEM", id });
+  // Then sometimes you can see action.type, action.item.id (when adding item) OR action.id (when removing item)
   if (action.type === "ADD_ITEM") {
     // Update the state to add the meal item
     // state.items.push(action.item);
@@ -15,7 +21,7 @@ function cartReducer(state, action) {
     // But if we click on adding one specific item multiple times?
     // This is an approach:
     const existingCartItemIndex = state.items.findIndex(
-      (item) => action.item.id
+      (item) => item.id === action.item.id
     );
     // Create a copy for state items
     const updatedItems = [...state.items];
@@ -41,7 +47,7 @@ function cartReducer(state, action) {
     const updatedItems = [...state.items];
     if (exisitingItem.quantity === 1) {
       // Remove item
-      updatedItems.slice(existingCartItemIndex, 1);
+      updatedItems.splice(existingCartItemIndex, 1);
     } else {
       const updatedItem = {
         ...exisitingItem,
@@ -60,11 +66,16 @@ export function CartContextProvider({ children }) {
   // useReducer accepts 2 params
   // the first one is a function to update state
   // the 2nd one is an initial state
+  // This is state: {
+  //   items: [],
+  // }
   const [cart, dispatchCartAction] = useReducer(cartReducer, {
     items: [],
   });
 
   function addItem(item) {
+    // And this is an action:
+    // { type: "ADD_ITEM", item }
     dispatchCartAction({ type: "ADD_ITEM", item });
   }
 
